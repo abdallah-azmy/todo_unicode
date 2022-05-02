@@ -18,13 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiProvider(
         providers: [
-
           StreamProvider<TodosProvider>(
             initialData: TodosProvider(),
             create: (context) => getTodo(),
           ),
           ChangeNotifierProvider.value(value: ControlTodo()),
-
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

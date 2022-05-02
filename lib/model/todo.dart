@@ -3,14 +3,18 @@ class TodoField {
 }
 
 class TodoModel {
-  DateTime? createdTime;
-  String? title;
-  String? id;
-  String? description;
-  bool? isDone;
+  late DateTime createdTime;
+  late String title;
+  late String id;
+  late String description;
+  late bool isDone;
 
   TodoModel(
-      {this.createdTime, this.title, this.id, this.description, this.isDone});
+      {required this.createdTime,
+      required this.title,
+      required this.id,
+      required this.description,
+      required this.isDone});
 
   factory TodoModel.fromMap(Map<String, dynamic> map) => TodoModel(
         createdTime: map['createdTime']!.toDate(),
@@ -20,11 +24,11 @@ class TodoModel {
         isDone: map['isDone'],
       );
 
-  Map<String, dynamic> toMap(TodoModel user) => {
-        'createdTime': user.createdTime,
-        'title': user.title,
-        'id': user.id,
-        'description': user.description,
-        'isDone': user.isDone,
+  Map<String, dynamic> toMap() => {
+        'createdTime': createdTime,
+        'title': title,
+        'id': id,
+        'description': description,
+        'isDone': isDone,
       };
 }

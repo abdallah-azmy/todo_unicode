@@ -10,22 +10,22 @@ class RepeatedWidgets {
   RepeatedWidgets._();
 
   static Widget todoWidget(
-      {required BuildContext context, required TodoModel todo}) {
+      {required BuildContext context, required TodoModel todoModel}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Slidable(
         // Specify a key if the Slidable is dismissible.
-        key: Key(todo.id!),
+        key: Key(todoModel.id),
 
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
           dismissible: DismissiblePane(onDismissed: () {
-            ControlTodo().todoDelete(id: todo.id);
+            ControlTodo().todoDelete(id: todoModel.id);
           }),
           children: [
             SlidableAction(
               onPressed: (BuildContext context) {
-                ControlTodo().todoDelete(id: todo.id);
+                ControlTodo().todoDelete(id: todoModel.id);
               },
               backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
@@ -44,9 +44,7 @@ class RepeatedWidgets {
                     context: context,
                     builder: (context) => AddTodoDialogWidget(
                           edit: true,
-                          id: todo.id,
-                          title: todo.title,
-                          description: todo.description,
+                          todoModel: todoModel,
                         ),
                     barrierDismissible: true);
               },
@@ -58,7 +56,7 @@ class RepeatedWidgets {
           ],
         ),
 
-        child: buildTodo(context: context, todo: todo),
+        child: buildTodo(context: context, todo: todoModel),
       ),
     );
   }
@@ -77,7 +75,7 @@ class RepeatedWidgets {
                   checkColor: Colors.white,
                   value: todo.isDone,
                   onChanged: (v) {
-                    provider.todoComplete(id: "${todo.id}", value: v!);
+                    provider.todoComplete(id: todo.id, value: v!);
                   },
                 );
               },
@@ -88,21 +86,20 @@ class RepeatedWidgets {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    todo.title!,
+                    todo.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColor,
                       fontSize: 22,
                     ),
                   ),
-                  if (todo.description!.isNotEmpty)
-                    Container(
-                      margin: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        todo.description!,
-                        style: const TextStyle(fontSize: 20, height: 1.5),
-                      ),
-                    )
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      todo.description,
+                      style: const TextStyle(fontSize: 20, height: 1.5),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -129,7 +126,8 @@ class RepeatedWidgets {
             itemBuilder: (context, index) {
               final todo = todos[index];
 
-              return RepeatedWidgets.todoWidget(context: context, todo: todo);
+              return RepeatedWidgets.todoWidget(
+                  context: context, todoModel: todo);
             },
           );
   }

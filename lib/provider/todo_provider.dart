@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:todo_unicode/widget/toast.dart';
 import '../model/todo.dart';
 
 class TodosProvider {
@@ -26,24 +27,18 @@ Stream<TodosProvider>? getTodo() {
 
 class ControlTodo with ChangeNotifier {
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-  String? title;
-  String? description;
 
-  addTodo({id}) {
-    var now = DateTime.now();
-    TodoModel? _forMe = TodoModel(
-        id: id,
-        title: title!,
-        createdTime: now,
-        description: description!,
-        isDone: false);
-    try {
-      _fireStore.collection('todo').doc(id).set(_forMe.toMap(_forMe));
-      id = null;
-      title = null;
-      description = null;
-    } catch (e) {
-      print("$e");
+  addTodo(
+    TodoModel todoModel,
+  ) {
+    if (todoModel.title.trim() == "") {
+      showToast(msg: "you should enter the title !", state: ToastState.error);
+    } else {
+      try {
+        _fireStore.collection('todo').doc(todoModel.id).set(todoModel.toMap());
+      } catch (e) {
+        print("$e");
+      }
     }
   }
 
@@ -65,22 +60,9 @@ class ControlTodo with ChangeNotifier {
     }
   }
 
-  todoEdit({id}) {
+  todoEdit(TodoModel todoModel) {
     try {
-      if (title != null) {
-        _fireStore.collection('todo').doc(id).update({
-          'title': title,
-        });
-      }
-      if (description != null) {
-        _fireStore
-            .collection('todo')
-            .doc(id)
-            .update({'description': description});
-      }
-
-      title = null;
-      description = null;
+      _fireStore.collection('todo').doc(todoModel.id).update(todoModel.toMap());
     } catch (e) {
       print("$e");
     }

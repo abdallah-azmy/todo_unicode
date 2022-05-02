@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../main.dart';
+import '../model/todo.dart';
+import '../provider/todo_provider.dart';
 import '../widget/add_todo_dialog_widget.dart';
 import '../widget/widgets.dart';
 
@@ -16,12 +19,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      RepeatedWidgets.todos(context: context,  complete: false),
-      RepeatedWidgets.todos(context: context,  complete: true)
+      RepeatedWidgets.todos(context: context, complete: false),
+      RepeatedWidgets.todos(context: context, complete: true)
       // const   CompleteListWidget(),
-
     ];
 
+    final List<TodoModel> todos = context.watch<TodosProvider>().todos;
     return Scaffold(
       appBar: AppBar(
         title: const Text(MyApp.title),
@@ -53,7 +56,15 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black,
         onPressed: () => showDialog(
           context: context,
-          builder: (context) =>  const AddTodoDialogWidget(edit: false,description: "",title: ""),
+          builder: (context) => AddTodoDialogWidget(
+            edit: false,
+            todoModel: TodoModel(
+                id: "${todos.isEmpty ? 0 : int.parse(todos.last.id) + 1}",
+                title: "",
+                description: "",
+                isDone: false,
+                createdTime: DateTime.now()),
+          ),
           barrierDismissible: true,
         ),
         child: const Icon(Icons.add),

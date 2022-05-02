@@ -6,13 +6,10 @@ import '../model/todo.dart';
 import '../provider/todo_provider.dart';
 
 class AddTodoDialogWidget extends StatelessWidget {
-  const AddTodoDialogWidget({Key? key, this.edit, this.id,this.title,this.description}) : super(key: key);
-  final bool? edit;
-  final String? id;
-  final String? title;
-  final String? description;
-
-
+  AddTodoDialogWidget({Key? key, required this.edit, required this.todoModel})
+      : super(key: key);
+  late final bool edit;
+  late final TodoModel todoModel;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -30,19 +27,18 @@ class AddTodoDialogWidget extends StatelessWidget {
             const SizedBox(height: 8),
             Consumer<ControlTodo>(
               builder: (context, provider, __) {
-                final List<TodoModel> todos =
-                    context.watch<TodosProvider>().todos;
                 return TodoFormWidget(
-                  onChangedTitle: (title) => provider.title = title,
+                  onChangedTitle: (title) => todoModel.title = title,
                   onChangedDescription: (description) =>
-                      provider.description = description,
-                  title: title!,
-                  description: description!,
+                      todoModel.description = description,
+                  title: todoModel.title,
+                  description: todoModel.description,
                   onSavedTodo: () async {
                     edit == true
-                        ? await provider.todoEdit(id: id)
+                        ? await provider.todoEdit(todoModel)
                         : await provider.addTodo(
-                            id: "${todos.isEmpty ? 0 : int.parse(todos.last.id!) + 1}");
+                            todoModel,
+                          );
                     Navigator.pop(context);
                   },
                 );
